@@ -1,0 +1,85 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.3
+    container_name: ddd-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: ddd
+      MYSQL_USER: ddd
+      MYSQL_PASSWORD: dddpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci", "--default-authentication-plugin=mysql_native_password"]
+
+  auth-session:
+    build:
+      context: .
+      dockerfile: auth-session/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mysql://mysql:3306/ddd?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: ddd
+      DB_PASSWORD: dddpass
+    depends_on:
+      - mysql
+    ports:
+      - "8081:8081"
+
+  auth-jwt:
+    build:
+      context: .
+      dockerfile: auth-jwt/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mysql://mysql:3306/ddd?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: ddd
+      DB_PASSWORD: dddpass
+      JWT_SECRET: super-secret-signing-key-change-me-1234567890
+      JWT_ACCESS_SECONDS: 300
+      JWT_REFRESH_SECONDS: 604800
+    depends_on:
+      - mysql
+    ports:
+      - "8082:8082"
+
+  api-a:
+    build:
+      context: .
+      dockerfile: api-a/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mysql://mysql:3306/ddd?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: ddd
+      DB_PASSWORD: dddpass
+      JWT_SECRET: super-secret-signing-key-change-me-1234567890
+      JWT_ACCESS_SECONDS: 300
+    depends_on:
+      - mysql
+      - auth-jwt
+    ports:
+      - "8083:8083"
+
+  api-b:
+    build:
+      context: .
+      dockerfile: api-b/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mysql://mysql:3306/ddd?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: ddd
+      DB_PASSWORD: dddpass
+      JWT_SECRET: super-secret-signing-key-change-me-1234567890
+      JWT_ACCESS_SECONDS: 300
+    depends_on:
+      - mysql
+      - auth-jwt
+    ports:
+      - "8084:8084"
+
+volumes:
+  mysql-data:

@@ -1,0 +1,9 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "ddd-observability"
+include("common", "auth-session", "auth-jwt", "api-a", "api-b")

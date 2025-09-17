@@ -1,0 +1,30 @@
+server:
+  port: 8084
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL:jdbc:mysql://localhost:3306/ddd?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:ddd}
+    password: ${DB_PASSWORD:dddpass}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+logging:
+  level:
+    com.example: INFO
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+metrics:
+  logging:
+    interval: 10000
+jwt:
+  secret: ${JWT_SECRET:super-secret-signing-key-change-me-1234567890}
+  issuer: ddd-platform
+  access-token-validity-seconds: ${JWT_ACCESS_SECONDS:300}

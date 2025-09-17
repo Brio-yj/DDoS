@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://repo.spring.io/release' }
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:3.2.5'
+        classpath 'io.spring.gradle:dependency-management-plugin:1.1.4'
+    }
+}
+
+allprojects {
+    group = 'com.example'
+    version = '0.1.0'
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://repo.spring.io/release' }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+    }
+}
+
+project(':common') {
+    apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:3.2.5"
+        }
+    }
+}
+
+['auth-session', 'auth-jwt', 'api-a', 'api-b'].each { moduleName ->
+    project(":${moduleName}") {
+        apply plugin: 'org.springframework.boot'
+        apply plugin: 'io.spring.dependency-management'
+    }
+}
