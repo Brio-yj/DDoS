@@ -2,6 +2,9 @@
 
 대규모 트래픽 환경에서 **세션 기반 인증**과 **JWT 기반 인증**의 내구성을 비교 검증하기 위한 실험용 프로젝트입니다. 두 종류의 인증 서버와 이를 소비하는 API 서버 2종, 그리고 공통 MySQL 저장소와 Python 부하 발생 스크립트로 구성되어 있습니다.
 
+## 아키텍처
+<img width="1131" height="757" alt="아키텍처" src="https://github.com/user-attachments/assets/bedae22f-b73d-48f2-acf3-e92581364858" />
+
 ## 구성 요소
 
 | 모듈 | 설명 | 주요 포트 |
